@@ -25,7 +25,6 @@ def recall(matrix: tf.Tensor, idx: int) -> tf.Tensor:
 
     ### ENTER STUDENT CODE BELOW ###
 
-
     ### ENTER STUDENT CODE ABOVE ###
 
     return recall
@@ -51,7 +50,6 @@ def precision(matrix: tf.Tensor, idx: int) -> tf.Tensor:
 
     ### ENTER STUDENT CODE BELOW ###
 
-
     ### ENTER STUDENT CODE ABOVE ###
 
     return precision
@@ -76,7 +74,6 @@ def f1_score(matrix: tf.Tensor, idx: int) -> tf.Tensor:
     f1_score = None
 
     ### ENTER STUDENT CODE BELOW ###
-
 
     ### ENTER STUDENT CODE ABOVE ###
 

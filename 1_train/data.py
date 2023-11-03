@@ -251,22 +251,49 @@ class AudioProcessor:
         else:
             ValueError("Incorrect dataset type given")
 
-        use_background = (self.background_data is not None) and (
-            mode == AudioProcessor.Modes.TRAINING
-        )
-        dataset = dataset.map(
-            lambda path, label: self.process_path(
-                path,
-                label,
-                self.model_settings,
-                background_frequency,
-                background_volume_range,
-                time_shift,
-                use_background,
-                self.background_data,
-                micro=self.micro,
-            ),
-            num_parallel_calls=tf.data.experimental.AUTOTUNE,
+        use_background = (self.background_data is not None) and (mode == AudioProcessor.Modes.TRAINING)
+        dataset = (
+            dataset.map(
+                lambda path, label: self.load_files(
+                    path,
+                    label,
+                    self.model_settings,
+                ),
+                num_parallel_calls=AUTOTUNE,
+            )
+            .cache()
+            .map(
+                lambda audio, label: self.add_shift(
+                    audio,
+                    label,
+                    self.model_settings,
+                    time_shift,
+                ),
+                num_parallel_calls=AUTOTUNE,
+            )
+            .batch(256)
+            .map(
+                lambda audio, label: self.add_background(
+                    audio,
+                    label,
+                    self.model_settings,
+                    background_frequency,
+                    background_volume_range,
+                    use_background,
+                    self.background_data,
+                ),
+                num_parallel_calls=AUTOTUNE,
+            )
+            .unbatch()
+            .map(
+                lambda audio, label: self.create_features(
+                    audio,
+                    label,
+                    self.model_settings,
+                    micro=self.micro,
+                ),
+                num_parallel_calls=AUTOTUNE,
+            )
         )
 
         return dataset
@@ -293,42 +320,28 @@ class AudioProcessor:
             ValueError("Incorrect dataset type given")
 
     @staticmethod
-    def process_path(
+    def load_files(
         path,
         label,
         model_settings,
-        background_frequency,
-        background_volume_range,
-        time_shift_samples,
-        use_background,
-        background_data,
-        micro=False,
     ):
-        """Load wav files and calculate features.
-
-        Random shifting of samples and adding in background noise is done within this function as well.
-        This function is meant to be mapped onto a TF Dataset by using a lambda function.
-
-        Args:
-            path: Path to the wav file to load.
-            label: Integer label for classifying the audio clip.
-            model_settings: Dictionary of settings for model being trained.
-            background_frequency: How many clips will have background noise, 0.0 to 1.0.
-            background_volume_range: How loud the background noise will be.
-            time_shift_samples: How much to randomly shift the clips by.
-            use_background: Add in background noise to audio clips or not.
-            background_data: Ragged tensor of loaded background noise samples.
-
-        Returns:
-            Tuple of calculated flattened feature and its class label.
-        """
-
         desired_samples = model_settings["desired_samples"]
         audio, sample_rate = load_wav_file(path, desired_samples=desired_samples)
 
         # Make our own silence audio data.
         if label == SILENCE_INDEX:
             audio = tf.multiply(audio, 0)
+
+        return audio, label
+
+    @staticmethod
+    def add_shift(
+        audio,
+        label,
+        model_settings,
+        time_shift_samples,
+    ):
+        desired_samples = model_settings["desired_samples"]
 
         # Shift samples start position and pad any gaps with zeros.
         if time_shift_samples > 0:
@@ -349,8 +362,20 @@ class AudioProcessor:
 
         padded_foreground = tf.pad(audio, time_shift_padding, mode="CONSTANT")
         sliced_foreground = tf.slice(padded_foreground, time_shift_offset, [desired_samples, -1])
+        return sliced_foreground, label
 
-        # Get a random section of background noise.
+    @staticmethod
+    def add_background(
+        audio,
+        label,
+        model_settings,
+        background_frequency,
+        background_volume_range,
+        use_background,
+        background_data,
+    ):
+        desired_samples = model_settings["desired_samples"]
+
         if use_background:
             background_index = tf.random.uniform(
                 shape=(), maxval=background_data.shape[0], dtype=tf.int32
@@ -375,11 +400,22 @@ class AudioProcessor:
 
         # Mix in background noise.
         background_mul = tf.multiply(background_reshaped, background_volume)
-        background_add = tf.add(background_mul, sliced_foreground)
+        background_add = tf.add(background_mul, audio)
         background_clamp = tf.clip_by_value(background_add, -1.0, 1.0)
 
+        return background_clamp, label
+
+    @staticmethod
+    def create_features(
+        audio,
+        label,
+        model_settings,
+        micro=False,
+    ):
+        sample_rate = 16000
+
         features = calculate_features(
-            background_clamp,
+            audio,
             sample_rate,
             model_settings["window_size_samples"],
             model_settings["window_stride_samples"],
@@ -438,10 +474,11 @@ class AudioProcessor:
 
                 return update_to
 
-
             # filepath, _ = urllib.request.urlretrieve(data_url, filepath, _report_hook)
-            with tqdm(unit = 'B', unit_scale = True, unit_divisor = 1024, miniters = 100, desc = "Dataset") as t:
-                filepath, _ = urllib.request.urlretrieve(data_url, filepath, reporthook = my_hook(t))
+            with tqdm(
+                unit="B", unit_scale=True, unit_divisor=1024, miniters=100, desc="Dataset"
+            ) as t:
+                filepath, _ = urllib.request.urlretrieve(data_url, filepath, reporthook=my_hook(t))
             print()
 
             print(f"Untarring {filename}...")

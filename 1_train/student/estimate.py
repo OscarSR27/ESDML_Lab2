@@ -112,7 +112,9 @@ def estimate_depthwise_conv2d_macs(
     return macs
 
 
-def estimate_fully_connected_macs(in_shape: List[int], filter_shape: List[int], out_shape: List[int]):
+def estimate_fully_connected_macs(
+    in_shape: List[int], filter_shape: List[int], out_shape: List[int]
+):
     """Calculate the estimated number of MACS to execute a Fully Connected layer.
 
     Arguments
@@ -179,17 +181,13 @@ def estimate_rom(tensors: List[MyTensor]):
 
     ### ENTER STUDENT CODE BELOW ###
 
-    # considering model weights and biases
-    # rom_bytes = weights + biases
-    #           = (tensor_size * 1 byte(considered model will be quantized)
-
     ### ENTER STUDENT CODE ABOVE ###
 
     return rom_bytes
 
 
 def estimate_ram(tensors: List[MyTensor], layers: List[MyLayer]):
-    """Calculate the estimated number of bytes required to store model weights in RAM.
+    """Calculate the estimated number of bytes required to store model tensors in RAM.
 
     Arguments
     ---------

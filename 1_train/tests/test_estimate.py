@@ -43,10 +43,14 @@ ALL_TENSORS = [
 ]
 
 # Test layers
-DEPTHWISE_CONV2D = MyLayer(0, "DepthwiseConv2D", [INPUT.idx, WEIGHTS_1.idx, BIAS_1.idx], [INTERMEDIATE_1.idx])
+DEPTHWISE_CONV2D = MyLayer(
+    0, "DepthwiseConv2D", [INPUT.idx, WEIGHTS_1.idx, BIAS_1.idx], [INTERMEDIATE_1.idx]
+)
 CONV2D = MyLayer(1, "Conv2D", [INTERMEDIATE_1.idx, WEIGHTS_2.idx, BIAS_2.idx], [INTERMEDIATE_2.idx])
 RESHAPE = MyLayer(2, "Reshape", [INTERMEDIATE_2.idx, SHAPE.idx], [INTERMEDIATE_2_.idx])
-FULLY_CONNECTED = MyLayer(3, "FullyConnected", [INTERMEDIATE_2_.idx, WEIGHTS_3.idx, BIAS_3.idx], [OUTPUT.idx])
+FULLY_CONNECTED = MyLayer(
+    3, "FullyConnected", [INTERMEDIATE_2_.idx, WEIGHTS_3.idx, BIAS_3.idx], [OUTPUT.idx]
+)
 ALL_LAYERS = [DEPTHWISE_CONV2D, CONV2D, RESHAPE, FULLY_CONNECTED]
 
 
@@ -57,9 +61,18 @@ def test_estimate_macs():
     assert estimate_fully_connected_macs([1, 1], [1, 1], [1, 1]) == 1
 
     # Single layers
-    assert estimate_depthwise_conv2d_macs(INPUT.shape, WEIGHTS_1.shape, INTERMEDIATE_1.shape, CHANNEL_MULT) == 131072
-    assert estimate_conv2d_macs(INTERMEDIATE_1.shape, WEIGHTS_2.shape, INTERMEDIATE_2.shape) == 1179648
-    assert estimate_fully_connected_macs(INTERMEDIATE_2_.shape, WEIGHTS_3.shape, OUTPUT.shape) == 40960
+    assert (
+        estimate_depthwise_conv2d_macs(
+            INPUT.shape, WEIGHTS_1.shape, INTERMEDIATE_1.shape, CHANNEL_MULT
+        )
+        == 131072
+    )
+    assert (
+        estimate_conv2d_macs(INTERMEDIATE_1.shape, WEIGHTS_2.shape, INTERMEDIATE_2.shape) == 1179648
+    )
+    assert (
+        estimate_fully_connected_macs(INTERMEDIATE_2_.shape, WEIGHTS_3.shape, OUTPUT.shape) == 40960
+    )
 
 
 def test_estimate_rom():
@@ -78,7 +91,12 @@ def test_estimate_rom():
 
 def test_estimate_ram():
     # Trvial cases
-    assert estimate_ram([MyTensor(0, "foo", [1, 1, 1, 1], "int8", True)], [MyLayer(0, "bar", [0], [0])]) == 0
+    assert (
+        estimate_ram(
+            [MyTensor(0, "foo", [1, 1, 1, 1], "int8", True)], [MyLayer(0, "bar", [0], [0])]
+        )
+        == 0
+    )
 
     # Single layer
     # assert estimate_ram(ALL_TENSORS, [DEPTHWISE_CONV2D]) == (9216, 9216)

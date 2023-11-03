@@ -162,6 +162,25 @@ def estimate_macs_per_layer(op, m, graph):
         tflite.BuiltinOperator.SOFTMAX,
         tflite.BuiltinOperator.MUL,
         tflite.BuiltinOperator.ADD,
+        tflite.BuiltinOperator.REDUCE_MAX,
+        tflite.BuiltinOperator.CONCATENATION,
+        tflite.BuiltinOperator.DEPTH_TO_SPACE,
+        tflite.BuiltinOperator.FLOOR,
+        tflite.BuiltinOperator.L2_NORMALIZATION,
+        tflite.BuiltinOperator.LOGISTIC,
+        tflite.BuiltinOperator.RELU,
+        tflite.BuiltinOperator.PAD,
+        tflite.BuiltinOperator.SUB,
+        tflite.BuiltinOperator.DIV,
+        tflite.BuiltinOperator.SQUEEZE,
+        tflite.BuiltinOperator.EXP,
+        tflite.BuiltinOperator.LOG_SOFTMAX,
+        tflite.BuiltinOperator.TRANSPOSE_CONV,
+        tflite.BuiltinOperator.REDUCE_PROD,
+        tflite.BuiltinOperator.REDUCE_ALL,
+        tflite.BuiltinOperator.QUANTIZE,
+        tflite.BuiltinOperator.MAXIMUM,
+        tflite.BuiltinOperator.MINIMUM,
     ]:
         return 0
     else:
@@ -244,6 +263,16 @@ def estimate_model_ram(m):
     return estimate_ram(tensors, layers)
 
 
+def estimate(model_path):
+    m = load_model(model_path)
+
+    estimated_rom = estimate_model_rom(m)
+    estimated_ram = estimate_model_ram(m)
+    estimated_macs = estimate_model_macs(m)
+
+    return estimated_rom, estimated_ram, estimated_macs
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("model")
@@ -252,11 +281,7 @@ def main():
     )
     args = parser.parse_args()
 
-    m = load_model(args.model)
-
-    estimated_rom = estimate_model_rom(m)
-    estimated_ram = estimate_model_ram(m)
-    estimated_macs = estimate_model_macs(m)
+    estimated_rom, estimated_ram, estimated_macs = estimate(args.model)
 
     estimations = f"""ROM={estimated_rom}
 RAM={estimated_ram}

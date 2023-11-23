@@ -2,14 +2,6 @@ import argparse
 
 import tflite.Model
 
-from student.estimate import (
-    estimate_conv2d_macs,
-    estimate_depthwise_conv2d_macs,
-    estimate_fully_connected_macs,
-    estimate_rom,
-    estimate_ram,
-)
-
 import numpy as np
 
 from student.estimate import (

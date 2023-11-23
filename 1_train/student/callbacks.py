@@ -6,10 +6,10 @@ import tensorflow as tf
 
 
 def get_early_stopping_callback() -> Optional[tf.keras.callbacks.Callback]:
-    """Create a EarlyStopping callback using the Keras API.
+    """Create an EarlyStopping callback using the Keras API.
 
     Requirements:
-    - Patience whould be 10 or higher
+    - Patience should be 10 or higher
     - Monitored value: "val_loss"
 
     Returns

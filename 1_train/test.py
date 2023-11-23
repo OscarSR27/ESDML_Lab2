@@ -46,7 +46,7 @@ def test(model, audio_processor, model_settings):
 
     print(f"Running testing on {FLAGS.mode} set...")
     accuracy = get_accuracy(expected_indices, predicted_indices)
-    print(f"{mode} accuracy = {accuracy * 100:.2f}%" f"(N={audio_processor.set_size(mode)})")
+    print(f"{mode} accuracy = {accuracy * 100:.2f}%(N={audio_processor.set_size(mode)})")
     print()
 
     confusion_matrix = get_confusion_matrix(expected_indices, predicted_indices, model_settings)

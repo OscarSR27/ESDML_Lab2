@@ -55,7 +55,7 @@ def tflite_test(model_settings, audio_processor, tflite_path, out=None, mode="te
         predicted_indices.append(np.squeeze(tf.argmax(prediction, axis=1)))
 
     accuracy = get_accuracy(predicted_indices, expected_indices)
-    print(f"{mode} accuracy = {accuracy * 100:.2f}%" f"(N={audio_processor.set_size(mode_)})")
+    print(f"{mode} accuracy = {accuracy * 100:.2f}%(N={audio_processor.set_size(mode_)})")
     print()
 
     confusion_matrix = get_confusion_matrix(expected_indices, predicted_indices, model_settings)

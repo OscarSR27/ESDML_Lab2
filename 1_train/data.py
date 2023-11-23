@@ -251,7 +251,9 @@ class AudioProcessor:
         else:
             ValueError("Incorrect dataset type given")
 
-        use_background = (self.background_data is not None) and (mode == AudioProcessor.Modes.TRAINING)
+        use_background = (self.background_data is not None) and (
+            mode == AudioProcessor.Modes.TRAINING
+        )
         dataset = (
             dataset.map(
                 lambda path, label: self.load_files(

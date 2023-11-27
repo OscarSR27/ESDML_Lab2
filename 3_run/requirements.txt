@@ -12,7 +12,7 @@ click>=7.0
 pyserial>=3.3
 future>=0.15.2
 cryptography>=2.1.4
-pyparsing>=2.0.3,<2.4.0
+pyparsing>=3.0.3
 pyelftools>=0.22
 idf-component-manager~=1.0
 gdbgui==0.13.2.0

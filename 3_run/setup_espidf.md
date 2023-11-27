@@ -4,7 +4,7 @@
 
 Follow the instructions of the [ESP-IDF get started guide](https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html) to set up and install the ESP-IDF.
 
-**Note:** Make sure you are cloning `release/v4.4` and installing the IDF for ESP32-C3 targets `./install.sh esp32c3` as explained below!
+**Note:** Make sure you are cloning `release/v5.2` and installing the IDF for ESP32-C3 targets `./install.sh esp32c3` as explained below!
 
 In later sections, it is assumed that the `IDF_DIR` environment variable points to the directory where `esp-idf` was cloned. On your local machine you will need to ensure that the `IDF_DIR` points to your ESP-IDF installation yourself. On chair computers this variable is set by the `setup.sh` script.
 
@@ -24,9 +24,9 @@ python3 --version
 
 3. Clone the ESP-IDF GitHub repository
 ```
-git clone --recursive --single-branch -b release/v4.4 https://github.com/espressif/esp-idf.git
+git clone --recursive --single-branch -b release/v5.2 https://github.com/espressif/esp-idf.git
 ```
-  *Ensure you are cloning the v4.4 repository, as this is the version we are using! Different versions might lead to compilation errors!*
+  *Ensure you are cloning the v5.2 repository, as this is the version we are using! Different versions might lead to compilation errors!*
 
 4. Install the ESP-IDF
 ```
@@ -49,6 +49,6 @@ source $IDF_DIR/export.sh
 ```
 idf.py --version
 ```
-If you see something along the lines of `ESP-IDF v4.4.*` (note the `v4.4`) you have successfully installed the ESP-IDF.
+If you see something along the lines of `ESP-IDF v5.2.*` (note the `v5.2`) you have successfully installed the ESP-IDF.
 
 **Note:** Whenever you open a new terminal you will need to repeat the first part of step 4., i.e. `export` the `IDF_DIR` variable to point to your `esp-idf` installation, as well as step 5., i.e. source the `export.sh` script!

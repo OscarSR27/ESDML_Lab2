@@ -173,6 +173,7 @@ def estimate_macs_per_layer(op, m, graph):
         tflite.BuiltinOperator.QUANTIZE,
         tflite.BuiltinOperator.MAXIMUM,
         tflite.BuiltinOperator.MINIMUM,
+        tflite.BuiltinOperator.MEAN,
     ]:
         return 0
     else:

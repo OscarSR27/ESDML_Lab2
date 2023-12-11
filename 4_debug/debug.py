@@ -124,7 +124,7 @@ class LoopRunner:
 
         fig = plt.figure(figsize=(8, 6))
         gs = gridspec.GridSpec(2, 2, width_ratios=[3, 2])
-        fig.canvas.set_window_title("Micro-KWS Debugger")
+        fig.canvas.manager.set_window_title("Micro-KWS Debugger")
         fig.set_facecolor("xkcd:grey")
 
         # Create feature graph

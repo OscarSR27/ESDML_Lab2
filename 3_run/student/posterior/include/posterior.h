@@ -58,12 +58,15 @@ class PosteriorHandler {
   uint32_t posterior_trigger_threshold_;
   uint32_t posterior_suppression_ms_;
   uint32_t posterior_category_count_;
+  uint32_t last_detection_time_; // Timestamp of the last detection to manage suppression
 
   // Working variables
 
   /* ------------------------ */
   /* ENTER STUDENT CODE BELOW */
   /* ------------------------ */
+  uint8_t** posterior_history_;  // Array to store the history of posteriors.
+  uint32_t* moving_average_;     // Array to store the moving average.
 
   /* ------------------------ */
   /* ENTER STUDENT CODE ABOVE */

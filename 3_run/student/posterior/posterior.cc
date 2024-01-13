@@ -8,7 +8,6 @@
  //Testing
 #include <inttypes.h>
 
-
 /**
  * @brief Default constructor for posterior handler
  *
@@ -26,11 +25,21 @@ PosteriorHandler::PosteriorHandler(uint32_t history_length, uint8_t trigger_thre
       posterior_category_count_(category_count),
       last_detection_time_(0), //Initialize last_detection_time_ to 0
       posterior_history_(nullptr),  // Initialize to nullptr for safe handling.
-      moving_average_(nullptr) {// Initialize to nullptr for safe handling.
+      moving_average_(nullptr) {// Initialize to nullptr for safe handling. {
 
   /* ------------------------ */
   /* ENTER STUDENT CODE BELOW */
   /* ------------------------ */
+
+  /*
+   * Hints:
+   * - data structured defined in (posterior.h) have to be initialized here
+   * - Normally an embedded developer wouln;t use malloc() to dynamically allocate arrays etc.
+   * - However to enable unit testing the history_length as well as the category_count are
+   *   not constant and therefore allocation has to be done i.e. using malloc.
+   * - While you are allowed to use C++ data structures, it is completely fine if you just
+   *   use plain C arrays/pointers/...
+   */
 
   // Allocate memory for the posterior history.
   // 1. Create an array of pointers size = number of classes (posterior_category_count_)
@@ -49,16 +58,6 @@ PosteriorHandler::PosteriorHandler(uint32_t history_length, uint8_t trigger_thre
   moving_average_ = new uint32_t[posterior_category_count_]();  // Create an array of pointers with size = posterior_category_count_. Initialize to zero.
                                                                 // This array will have the average of N model outputs for each category, where N = posterior_history_length_
 
-  /*
-   * Hints:
-   * - data structured defined in (posterior.h) have to be initialized here
-   * - Normally an embedded developer wouln;t use malloc() to dynamically allocate arrays etc.
-   * - However to enable unit testing the history_length as well as the category_count are
-   *   not constant and therefore allocation has to be done i.e. using malloc.
-   * - While you are allowed to use C++ data structures, it is completely fine if you just
-   *   use plain C arrays/pointers/...
-   */
-
   /* ------------------------ */
   /* ENTER STUDENT CODE ABOVE */
   /* ------------------------ */
@@ -72,7 +71,13 @@ PosteriorHandler::~PosteriorHandler() {
   /* ------------------------ */
   /* ENTER STUDENT CODE BELOW */
   /* ------------------------ */
-  
+
+  /*
+   * Hints:
+   * - Every data structure allocated in the constructor above has to be cleaned up properly
+   * - This can for example be achieved using free()
+   */
+
   // Free the memory of the posterior history.
   for (uint32_t i = 0; i < posterior_category_count_; ++i)
   {
@@ -89,11 +94,6 @@ PosteriorHandler::~PosteriorHandler() {
 
   // Free the memory of the moving average.
   delete[] moving_average_;
-  /*
-   * Hints:
-   * - Every data structure allocated in the constructor above has to be cleaned up properly
-   * - This can for example be achieved using free()
-   */
 
   /* ------------------------ */
   /* ENTER STUDENT CODE ABOVE */
@@ -136,11 +136,6 @@ esp_err_t PosteriorHandler::Handle(uint8_t* new_posteriors, uint32_t time_ms,
    * - If trigger is high, the detected category index has to updated as well using the argument.
    * - You are allowed (and required) to introduce class variables inside include/posterior.h which
    * may than be (de-)initialized in the constructor/destuctor above.
-   */
-
-  /*
-   * The following code is a basic example (not an accepted solution)
-   * It just returns the class with the highest probablity.
    */
 
   // First, update the moving averages for each category
@@ -196,4 +191,9 @@ esp_err_t PosteriorHandler::Handle(uint8_t* new_posteriors, uint32_t time_ms,
   *top_category_index = max_index;
 
   return ESP_OK;
+
+
+  /* ------------------------ */
+  /* ENTER STUDENT CODE ABOVE */
+  /* ------------------------ */
 }

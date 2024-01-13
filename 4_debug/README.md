@@ -45,11 +45,30 @@ In this mode, the ESP32-C3 is transmitting binary debugging data via the serial 
 ```
 and choose mode `Debug: Stream data to debugger GUI` option in the `Mode for MicroKWS Execution` submenu. This will send the binary debugging data over the serial USB connection. However, by default, all print and debug statements in the target software are also forwarded and transmitted over this serial connection. They would interfere with our binary debugging data. Thus, we will need to disable the forwarding of print statements.
 
-2) For this, navigate to
+2) For this, first navigate to
+```
+(Top) → Component config → ESP System Settings
+```
+
+3) Next, open
 ```
 (Top) → Component config → ESP System Settings → Channel for console output
 ```
-and change the setting from `Default: UART0` to `None`. Save the setting, recompile and upload the code to ESP32-C3. Now, the USB serial connection is solely being used by the binary debugging data stream.
+and change the setting from `Default: UART0` to `Custom UART`.
+
+4) Now, also open
+```
+(Top) → Component config → ESP System Settings → UART peripheral to use for console output (0-1)
+```
+and change the setting from `UART0` to `UART1`.
+
+5) Finally change
+```
+(Top) → Component config → ESP System Settings → UART TX/RX on GPIO#
+```
+to 19/18 respectively.
+
+6) Save the setting, recompile and upload the code to ESP32-C3. Now, the USB serial connection is solely being used by the binary debugging data stream.
 
 When you now run the Python debugger, you should see the live data being displayed in the GUI.
 
